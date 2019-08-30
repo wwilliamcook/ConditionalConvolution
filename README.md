@@ -7,7 +7,7 @@ Applications for this architecture are numerous and broad. Here is a brief list 
 * High level scripted robotics
 * Dynamic image-to-image mapping
 * Dynamic object detection/recognition
-* Question-based image describing for the visually impaired
+* Interactive image captioning for the visually impaired
 * New "question"-based attention model for image encoding in deep reinforcement learning
 
 I believe this architecture offers a much richer approach to image processing than current architectures and could be widely adopted as a replacement for the "vanilla" convolutional layer.
