@@ -17,7 +17,7 @@ __status__ = "Prototype"
 __data__ = "29 Aug. 2019"
 
 
-BATCH_SIZE = 32
+BATCH_SIZE = 8
 IMAGE_HEIGHT = 32
 IMAGE_WIDTH = 32
 IMAGE_DEPTH = 3
