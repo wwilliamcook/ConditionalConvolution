@@ -111,19 +111,3 @@ class QueryableConv2D(kl.Layer):
             y = activation(tf.einsum('bijd,de -> bije', y, W) + b)
 
         return y
-
-def build_model(img_shape, query_dims):
-    # Define input tensors
-    x = tf.keras.Input(shape=img_shape)
-    Q = tf.keras.Input(shape=[query_dims])
-    # Build model
-    y = QueryableConv2D([64, 8], [5, 5],
-                        activation=['relu', 'relu'])([x, Q])
-    return tf.keras.Model(inputs=[x, Q], outputs=y)
-
-model = build_model([32, 32, 3], 15)
-
-x = np.random.random(size=(8, 32, 32, 3))
-Q = np.random.random(size=(8, 15))
-y = model([x, Q])
-print(y.shape)
