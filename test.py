@@ -10,7 +10,6 @@ from layers import QueryableConv2D
 
 
 __author__ = "Weston Cook"
-__credits__ = ["Weston Cook"]
 __license__ = "Not yet licensed"
 __email__ = "wwcook@ucsc.edu"
 __status__ = "Prototype"
