@@ -14,12 +14,12 @@ __status__ = "Prototype"
 __data__ = "31 Aug. 2019"
 
 
-IMAGE_SHAPE = [32, 32, 3]
+IMAGE_SHAPE = [48, 48, 1]
 VOCAB_SIZE = 1000
 
 
 transform_model, discriminator_model = build_models(
-    IMAGE_SHAPE, VOCAB_SIZE, 64, [64, 96, 96, 128, 128], True)
+    IMAGE_SHAPE, VOCAB_SIZE, 1, [1], True)
 
 video_capture = cv.VideoCapture(0)
 
@@ -40,9 +40,9 @@ while True:
                                   size=(1, np.random.randint(2, 11)))
         out = np.squeeze(transform_model([reshaped, query]))
         display = np.concatenate(
-            [cv.resize(img, None, fx=10, fy=10,
+            [cv.resize(img, (480, 480),
                        interpolation=cv.INTER_NEAREST),
-             cv.resize(out, None, fx=10, fy=10,
+             cv.resize(out, (480, 480),
                        interpolation=cv.INTER_NEAREST)], 1)
 #        display = np.uint8(display * 255)
         cv.imshow('Display', display)
