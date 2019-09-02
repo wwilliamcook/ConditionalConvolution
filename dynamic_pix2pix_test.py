@@ -18,7 +18,7 @@ IMAGE_SHAPE = [48, 48, 1]
 VOCAB_SIZE = 1000
 
 
-transform_model, discriminator_model = build_models(
+transform_model, discriminator_model, generator_train_model = build_models(
     IMAGE_SHAPE, VOCAB_SIZE, 1, [1], True)
 
 video_capture = cv.VideoCapture(0)

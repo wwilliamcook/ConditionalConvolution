@@ -40,7 +40,7 @@ def build_models(image_shape, vocab_size, embedding_dims, lstm_units, bidirectio
     image = tf.keras.Input(shape=image_shape)
     indices = tf.keras.Input(shape=[None])
     # Build text encoder
-    q = kl.Embedding(vocab_size, embedding_dims)(indices)
+    q = kl.Embedding(vocab_size + 1, embedding_dims)(indices)  # + 1 to account for unknown tokens
     for units in lstm_units[:-1]:  # Need to return sequences for all but last LSTM layer
         if bidirectional_lstm:
             q = kl.Bidirectional(kl.LSTM(units, return_sequences=True))(q)
@@ -79,8 +79,10 @@ def build_models(image_shape, vocab_size, embedding_dims, lstm_units, bidirectio
 
     image_transform_model = tf.keras.Model(inputs=[image, indices], outputs=y)
 
+    generator_output = tf.keras.Input(shape=image_shape)
+
     # Build discriminator model
-    dy = tf.concat([image, y], axis=3)
+    dy = tf.concat([image, generator_output], axis=3)
     dy = QueryableConv2D(8, [5, 5], activation='relu', padding='SAME')([dy, q])
     dy = QueryableConv2D(12, [5, 5], activation='relu', padding='SAME')([dy, q])
     dy = QueryableConv2D(16, [5, 5], activation='relu', padding='SAME')([dy, q])
@@ -99,6 +101,8 @@ def build_models(image_shape, vocab_size, embedding_dims, lstm_units, bidirectio
     dy = kl.Dense(16, activation='relu')(dy)
     dy = kl.Dense(1, activation='sigmoid')(dy)
 
-    discriminator_model = tf.keras.Model(inputs=[image, indices], outputs=dy)
+    discriminator_model = tf.keras.Model(inputs=[image, indices, generator_output], outputs=dy)
 
-    return image_transform_model, discriminator_model
+    generator_train_model = tf.keras.Model(inputs=[image, indices], outputs=discriminator_model([image, indices, y]))
+
+    return image_transform_model, discriminator_model, generator_train_model
