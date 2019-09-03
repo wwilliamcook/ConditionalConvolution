@@ -72,6 +72,11 @@ def DynamicTextToIndices(vocab_size):
                 return vocab_size  # Unknown token
     
     def text_to_indices(s, training=False):
-        return np.uint32([get_token_index(token, training) for token in tokenize(s)])
+        if s:
+            indices = [get_token_index(token, training) for token in tokenize(s)]
+        else:
+            indices = []
+        
+        return np.array(indices, dtype=np.uint32)
     
     return text_to_indices
