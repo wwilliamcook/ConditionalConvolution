@@ -1,4 +1,6 @@
 """Implementation of a queryable convolutional layer in Tensorflow 2.0 Keras.
+
+Also includes some other custom layers.
 """
 
 
@@ -130,3 +132,31 @@ class QueryableConv2D(kl.Layer):
                 y = activation(tf.einsum('bijd,de -> bije', y, W))
 
         return y
+
+class CreativeNoise(kl.Layer):
+    """Adds gaussian noise to the input.
+
+    Designed to introduce controlled non-deterministic behavior to the input
+    by allowing the magnitude of the noise to be trained while also adding
+    a loss to keep the magnitude from being trained to zero.
+    """
+    def __init__(self, loss_rate=1.0, stddev=1.0):
+        """Adds trainable gaussian noise to the input.
+        """
+        super(CreativeNoise, self).__init__()
+        self.loss_rate = loss_rate
+        self.stddev = stddev
+    
+    def build(self, input_shape):
+        # Add a trainable weight to multiply the noise by
+        self.noise_weights = self.add_weight(shape=input_shape,
+                                             initializer='ones',
+                                             trainable=True)
+    
+    def call(self, inputs):
+        # Create a loss to keep the noise from being removed completely
+        self.add_loss(-self.loss_rate * tf.reduce_sum(tf.math.log(tf.math.abs(self.noise_weights))))
+        # Add the weighted noise to the input
+        noise = tf.random.normal(tf.shape(inputs), stddev=self.stddev)
+        weighted_noise = noise * self.noise_weights
+        return inputs + weighted_noise
