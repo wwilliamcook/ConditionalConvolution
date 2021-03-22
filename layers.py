@@ -32,6 +32,37 @@ class CondConv(kl.Layer):
         return y
 
 
+def WrapCondConv(conv_layer_class, *args, **kwargs):
+    """Convenience function for creating a CondConv layer.
+
+    :param: conv_layer_class: tensorflow keras class for internal Conv layer
+    """
+    if 'activation' in kwargs:
+        activation = kwargs['activation']
+        kwargs['activation'] = None
+    else:
+        activation = None
+    return CondConv(conv_layer_class(*args, **kwargs), activation=activation)
+
+
+def CondConv1D(*args, **kwargs):
+    """Returns a 1D conditional convolution layer.
+    """
+    return WrapCondConv(kl.Conv1D, *args, **kwargs)
+
+
+def CondConv2D(*args, **kwargs):
+    """Returns a 2D conditional convolution layer.
+    """
+    return WrapCondConv(kl.Conv2D, *args, **kwargs)
+
+
+def CondConv3D(*args, **kwargs):
+    """Returns a 3D conditional convolution layer.
+    """
+    return WrapCondConv(kl.Conv3D, *args, **kwargs)
+
+
 class CreativeNoise(kl.Layer):
     """Adds gaussian noise to the input.
 
